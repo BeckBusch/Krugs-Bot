@@ -3,8 +3,13 @@ import discord
 from discord_slash import SlashCommand
 from discord.ext import commands
 from discord_slash.utils.manage_commands import create_option
+from discord import FFmpegPCMaudio
 import yeelight
+import requests
+import json
 import re
+import youtube_dl
+import os
 
 # Initialisation and constant definition
 client = commands.Bot(command_prefix='/')
@@ -86,6 +91,26 @@ async def on_message(message):
     if line == "Join my coop game on Bloons TD 6! https://join.btd6.com/Coop/":
         await discord.Message.delete(message)
         await client.get_channel(message.channel.id).send(code)
+
+@client.command(pass_context = True)
+async def joinvc(ctx):
+    if(ctx.author.voice):
+        channel = ctx.message.author.voice.channel # voice channel id
+        songs = await channel.connect() # join vc
+    else:
+        await ctx.send("not in voice fuk off")
+
+@client.command(pass_context = True)
+async def soggy(ctx, url:str):
+    os.remove("audio")
+
+    ydl_opts = {'outtmpl': 'audio'}
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+        
+    song = FFmpegPCMaudio("audio") # song, 'audio' is the file name
+    audio = voice.play(song)
+
 
 
 client.run(secret)
